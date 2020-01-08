@@ -4,7 +4,7 @@
 
 class HuffmanNode
 {
-	char data;
+	unsigned char data;
 	size_t count;
 
 	static void serialize(HuffmanNode* node, std::vector<bool>& output)
@@ -25,13 +25,13 @@ class HuffmanNode
 		}
 	}
 
-	HuffmanNode(char data, HuffmanNode* left, HuffmanNode* right){
+	HuffmanNode(char data, HuffmanNode* left, HuffmanNode* right) {
 		this->data = data;
 		this->count = 0;
 		this->left = left;
 		this->right = right;
 	}
-  
+
 	static char parseByte(std::vector<bool>& input, size_t& ind) {
 		char r = 0;
 		for (size_t i = ind; i < ind + 8; i++)
@@ -43,18 +43,7 @@ class HuffmanNode
 		return r;
 	}
 
-	static HuffmanNode* deserialize(std::vector<bool>& input, size_t& ind)
-	{
-		if (input[ind++])
-		{
-			return new HuffmanNode(parseByte(input, ind), 0);
-		}
-		else {
-			HuffmanNode* left = deserialize(input, ind);
-			HuffmanNode* right = deserialize(input, ind);
-			return new HuffmanNode('\0', left, right);
-		}
-	}
+
 public:
 	HuffmanNode* left;
 	HuffmanNode* right;
@@ -77,7 +66,7 @@ public:
 		return count;
 	}
 
-	size_t get_data() {
+	char get_data() {
 		return data;
 	}
 
@@ -86,10 +75,17 @@ public:
 		serialize(this, output);
 	}
 
-	static HuffmanNode* deserialize(std::vector<bool>& input)
+	static HuffmanNode* deserialize(std::vector<bool>& input, size_t& ind)
 	{
-		size_t ind = 0;
-		return deserialize(input, ind);
+		if (input[ind++])
+		{
+			return new HuffmanNode(parseByte(input, ind), 0);
+		}
+		else {
+			HuffmanNode* left = deserialize(input, ind);
+			HuffmanNode* right = deserialize(input, ind);
+			return new HuffmanNode('\0', left, right);
+		}
 	}
 
 };
