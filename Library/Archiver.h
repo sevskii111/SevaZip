@@ -35,19 +35,14 @@ private:
         }
     }
 
-    vector<bool> getMeta(map<char, vector<bool>> dic)
-    {
-        
-
-    }
 public:
-    std::vector<char> zip(istream& input) {
+    void zip(istream& input, ostream& output) {
         size_t counts[256];
         for (int i = 0; i < 256; i++) {
             counts[i] = 0;
         }
 
-        char t;
+        unsigned char t;
         while (input >> std::noskipws >> t) {
             counts[t]++;
         }
@@ -72,8 +67,8 @@ public:
         HuffmanNode n = tree.extractMin();
         map<char, vector<bool>> dic = getCodes(n);
 
-        vector<bool> at;
-        n.serialize(at);
+        vector<bool> data;
+        n.serialize(data);
         
         input.clear();
         input.seekg(0, ios::beg);
@@ -81,35 +76,47 @@ public:
             vector<bool> c = dic[t];
             for (size_t i = 0; i < c.size(); i++)
             {
-                at.push_back(c[i]);
+                data.push_back(c[i]);
             }
         }
 
-        size_t diff = 8 - at.size() % 8;
+        size_t diff = 8 - data.size() % 8;
         for (int i = 0; i < diff; i++)
         {
-            at.insert(at.begin(), false);
+            data.insert(data.begin(), false);
         }
 
         std::bitset<8> bits = std::bitset<8>(diff);
         for (size_t i = 0; i < 8; i++) {
-            at.insert(at.begin(), bits[7 - i]);
+            data.insert(data.begin(), bits[7 - i]);
         }
 
-        std::vector<char> bytes((int)std::ceil((float)at.size() / 8));
+        std::vector<char> bytes((int)std::ceil((float)data.size() / 8));
         for (int byteIndex = 0; byteIndex < bytes.size(); ++byteIndex) {
             for (int bitIndex = 0; bitIndex < 8; ++bitIndex) {
-                int bit = at[byteIndex * 8 + bitIndex];
+                int bit = data[byteIndex * 8 + bitIndex];
 
                 bytes[byteIndex] |= bit << bitIndex;
             }
+            output << bytes[byteIndex];
         }
 
-        return bytes;
     }
 
-    ifstream& unzip(char* input) {
+    void unzip(istream& input, ostream& output) {
+       
+        char c;
+        vector<bool> data;
+        size_t diff = 0;
+        size_t ind = 0;
+        while (input.get(c))
+        {
+            if (ind < 1)
+            {
+                diff = c;
+            }
 
+        }
     }
 };
 
