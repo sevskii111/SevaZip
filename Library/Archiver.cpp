@@ -78,10 +78,10 @@ void Archiver::zip(istream& input, ostream& output) {
 
 	vector<bool> data;
 	data.reserve(tree_size + encoded_size + offset + 8);
-	std::bitset<8> bits = std::bitset<8>(offset);
 
-	for (size_t i = 0; i < 8; i++) {
-		data.push_back(bits[i]);
+	for (int j = 0; j < 8; j++)
+	{
+		data.push_back((offset >> j) & 1);
 	}
 
 	for (size_t i = 0; i < offset; i++)
@@ -91,43 +91,47 @@ void Archiver::zip(istream& input, ostream& output) {
 
 	root.serialize(data);
 
-
+	data.resize(tree_size + encoded_size + offset + 8);
+	size_t bit = 0;
 	for (size_t i = 0; i < buffer.size(); i++)
 	{
-		vector<bool> c = dic[buffer[i]];
-		for (size_t j = 0; j < c.size(); j++)
+		for (size_t j = 0; j < dic[buffer[i]].size(); j++)
 		{
-			data.push_back(c[j]);
+			data[8 + offset + tree_size + bit] = dic[buffer[i]][j];
+			bit++;
 		}
 	}
 
-
-	std::vector<char> bytes((int)std::ceil((float)data.size() / 8));
-	for (int byteIndex = 0; byteIndex < bytes.size(); ++byteIndex) {
-		for (int bitIndex = 0; bitIndex < 8; ++bitIndex) {
-			int bit = data[byteIndex * 8 + bitIndex];
-
-			bytes[byteIndex] |= bit << bitIndex;
+	for (size_t i = 0; i < data.size(); i += 8)
+	{
+		unsigned char byte = 0;
+		for (size_t j = 0; j < 8; j++)
+		{
+			byte <<= 1;
+			byte += data[i + 7 - j];
 		}
-		output << bytes[byteIndex];
+		output << byte;
 	}
+
 
 }
 
 void Archiver::unzip(istream& input, ostream& output) {
 
 	vector<bool> data;
-	char c;
-	int offset = -1;
-	while (input >> std::noskipws >> c)
+	std::vector<unsigned char> buffer(std::istreambuf_iterator<char>(input), {});
+
+	char offset = -1;
+	data.resize(buffer.size() * 8);
+	for (size_t i = 0;i < buffer.size();i++)
 	{
 		if (offset == -1)
 		{
-			offset = c;
+			offset = buffer[i];
 		}
-		for (int i = 0; i < 8; i++)
+		for (int j = 0; j < 8; j++)
 		{
-			data.push_back((c >> i) & 1);
+			data[i * 8 + j] = ((buffer[i] >> j) & 1);
 		}
 	}
 	if (data.size() == 0)
@@ -135,7 +139,7 @@ void Archiver::unzip(istream& input, ostream& output) {
 		return;
 	}
 
-	size_t curr_bit = 8 + offset;
+	size_t curr_bit = offset + 8;
 	HuffmanNode* root = HuffmanNode::deserialize(data, curr_bit);
 	if (!root->isLeaf()) {
 		HuffmanNode* curr_node = root;
