@@ -22,7 +22,7 @@
     <VCProjectVersion>16.0</VCProjectVersion>
     <ProjectGuid>{4AAB3C94-E9C6-4F4B-B133-C2D74503BACF}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
-    <RootNamespace>SevaZip</RootNamespace>
+    <RootNamespace>SevinZip</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
     <ProjectName>SevinZip</ProjectName>
   </PropertyGroup>

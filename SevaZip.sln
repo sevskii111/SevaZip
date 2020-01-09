@@ -5,7 +5,7 @@ VisualStudioVersion = 16.0.29613.14
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Library", "Library\Library.vcxproj", "{E3D90ECC-3DDD-4491-BA14-6932FF9A6EB2}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SevaZip", "SevaZip\SevaZip.vcxproj", "{4AAB3C94-E9C6-4F4B-B133-C2D74503BACF}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SevinZip", "SevinZip\SevinZip.vcxproj", "{4AAB3C94-E9C6-4F4B-B133-C2D74503BACF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -30,19 +30,51 @@ vector<vector<bool>> getCodes(HuffmanNode tree) {
 }
 
 
+void serialize_tree(HuffmanNode* node, BinaryWriter& w)
+{
+	if (node->isLeaf())
+	{
+		w.write(1);
+		std::bitset<8> bits = std::bitset<8>(node->get_data());
+		for (size_t i = 0; i < 8; i++) {
+			w.write(bits[7 - i]);
+		}
+	}
+	else
+	{
+		w.write(0);
+		serialize_tree(node->left, w);
+		serialize_tree(node->right, w);
+	}
+}
+
+HuffmanNode* deserialize_tree(std::vector<unsigned char>& input, size_t& ind)
+{
+	if (Binary::getBit(input, ind++))
+	{
+		return new HuffmanNode(Binary::parseByte(input, ind));
+	}
+	else {
+		HuffmanNode* left = deserialize_tree(input, ind);
+		HuffmanNode* right = deserialize_tree(input, ind);
+		return new HuffmanNode(left, right);
+	}
+}
+
+
+
 void Archiver::zip(istream& input, ostream& output) {
 	size_t counts[256];
 	for (int i = 0; i < 256; i++) {
 		counts[i] = 0;
 	}
 
-	std::vector<unsigned char> buffer(std::istreambuf_iterator<char>(input), {});
-
-	for (size_t i = 0; i < buffer.size(); i++)
+	input >> std::noskipws;
+	char* s = new char[1];
+	while (input.read(s, 1))
 	{
-		counts[buffer[i]]++;
+		counts[(unsigned char)s[0]]++;
 	}
-
 
 	BinaryHeap<HuffmanNode> tree;
 	size_t tree_size = 0;
@@ -76,75 +108,50 @@ void Archiver::zip(istream& input, ostream& output) {
 	}
 	size_t offset = (8 - (tree_size + encoded_size) % 8);
 
-	vector<bool> data;
-	data.reserve(tree_size + encoded_size + offset + 8);
+	BinaryWriter bw(output);
 
 	for (int j = 0; j < 8; j++)
 	{
-		data.push_back((offset >> j) & 1);
+		bw.write((offset >> j) & 1);
 	}
 
 	for (size_t i = 0; i < offset; i++)
 	{
-		data.push_back(0);
+		bw.write(0);
 	}
 
-	root.serialize(data);
+	serialize_tree(&root, bw);
 
-	data.resize(tree_size + encoded_size + offset + 8);
-	size_t bit = 0;
-	for (size_t i = 0; i < buffer.size(); i++)
+	input.clear();
+	input.seekg(ios::beg);
+
+	while (input.read(s, 1))
 	{
-		for (size_t j = 0; j < dic[buffer[i]].size(); j++)
+		for (size_t j = 0; j < dic[(unsigned char)s[0]].size(); j++)
 		{
-			data[8 + offset + tree_size + bit] = dic[buffer[i]][j];
-			bit++;
+			bw.write(dic[(unsigned char)s[0]][j]);
 		}
 	}
 
-	for (size_t i = 0; i < data.size(); i += 8)
-	{
-		unsigned char byte = 0;
-		for (size_t j = 0; j < 8; j++)
-		{
-			byte <<= 1;
-			byte += data[i + 7 - j];
-		}
-		output << byte;
-	}
 }
 
 void Archiver::unzip(istream& input, ostream& output) {
 
-	vector<bool> data;
 	std::vector<unsigned char> buffer(std::istreambuf_iterator<char>(input), {});
 
-	char offset = -1;
-	data.resize(buffer.size() * 8);
-	for (size_t i = 0;i < buffer.size();i++)
-	{
-		if (offset == -1)
-		{
-			offset = buffer[i];
-		}
-		for (int j = 0; j < 8; j++)
-		{
-			data[i * 8 + j] = ((buffer[i] >> j) & 1);
-		}
-	}
-	if (data.size() == 0)
+	if (buffer.size() == 0)
 	{
 		return;
 	}
 
-	size_t curr_bit = offset + 8;
-	HuffmanNode* root = HuffmanNode::deserialize(data, curr_bit);
+	size_t curr_bit = buffer[0] + 8;
+	HuffmanNode* root = deserialize_tree(buffer, curr_bit);
 	if (!root->isLeaf()) {
 		HuffmanNode* curr_node = root;
-		while (curr_bit < data.size())
+		while (curr_bit < buffer.size() * 8)
 		{
 
-			if (data[curr_bit])
+			if (Binary::getBit(buffer, curr_bit))
 			{
 				curr_node = curr_node->right;
 			}
@@ -162,7 +169,7 @@ void Archiver::unzip(istream& input, ostream& output) {
 		}
 	}
 	else {
-		while (curr_bit < data.size())
+		while (curr_bit < buffer.size() * 8)
 		{
 			output << root->get_data();
 			curr_bit++;

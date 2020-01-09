@@ -148,10 +148,12 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Archiver.h" />
+    <ClInclude Include="Binary.h" />
     <ClInclude Include="HuffmanTree.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Archiver.cpp" />
+    <ClCompile Include="Binary.cpp" />
     <ClCompile Include="BinaryHeap.hpp" />
     <ClCompile Include="HuffmanTree.cpp" />
   </ItemGroup>

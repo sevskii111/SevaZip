@@ -21,6 +21,9 @@
     <ClInclude Include="HuffmanTree.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Binary.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="BinaryHeap.hpp">
@@ -30,6 +33,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="HuffmanTree.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Binary.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
