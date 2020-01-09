@@ -8,7 +8,7 @@
 class Archiver
 {
 public:
-	void zip(std::istream& input, std::ostream& output);
-	void unzip(std::istream& input, std::ostream& output);
+	static void zip(std::istream& input, std::ostream& output);
+	static void unzip(std::istream& input, std::ostream& output);
 };
 

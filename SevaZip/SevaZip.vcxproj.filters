@@ -15,7 +15,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="SevaZip.cpp">
+    <ClCompile Include="SevinZip.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

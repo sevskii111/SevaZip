@@ -112,8 +112,6 @@ void Archiver::zip(istream& input, ostream& output) {
 		}
 		output << byte;
 	}
-
-
 }
 
 void Archiver::unzip(istream& input, ostream& output) {
