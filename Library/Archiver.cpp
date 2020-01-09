@@ -2,7 +2,7 @@
 
 using namespace std;
 
-void getCodes(HuffmanNode* node, vector<bool> prefix, map<unsigned char, vector<bool>>& m)
+void getCodes(HuffmanNode* node, vector<bool> prefix, vector<vector<bool>>& m)
 {
 	if (node->isLeaf()) {
 		if (prefix.size() == 0) {
@@ -21,8 +21,9 @@ void getCodes(HuffmanNode* node, vector<bool> prefix, map<unsigned char, vector<
 	}
 }
 
-map<unsigned char, vector<bool>> getCodes(HuffmanNode tree) {
-	map<unsigned char, vector<bool>> result;
+vector<vector<bool>> getCodes(HuffmanNode tree) {
+	vector<vector<bool>> result;
+	result.resize(256);
 	vector<bool> prefix;
 	getCodes(&tree, prefix, result);
 	return result;
@@ -67,7 +68,7 @@ void Archiver::zip(istream& input, ostream& output) {
 
 	HuffmanNode root = tree.extractMin();
 
-	map<unsigned char, vector<bool>> dic = getCodes(root);
+	vector<vector<bool>> dic = getCodes(root);
 
 	size_t encoded_size = 0;
 	for (int i = 0; i < 256; i++) {
