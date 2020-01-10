@@ -1,13 +1,11 @@
 #pragma once
 #include <vector>
-#include <istream>
 #include <iostream>
 
 class Binary
 {
 public:
 	static char getBit(std::vector<unsigned char>& input, size_t ind);
-	static char parseByte(std::vector<unsigned char>& input, size_t& ind);
 };
 
 class BinaryWriter
@@ -18,4 +16,17 @@ private:
 public:
 	BinaryWriter(std::ostream& out);
 	void write(bool d);
+};
+
+class BinaryReader
+{
+private:
+	unsigned char byte, index;
+	std::istream& input;
+	bool finished;
+public:
+	BinaryReader(std::istream& in);
+	char read();
+	unsigned char readByte();
+	bool isFinished();
 };
